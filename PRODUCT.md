@@ -8,7 +8,7 @@ macos (native SwiftUI menu bar app; not one of web/ios/android/adaptive)
 
 ## Users
 
-Video editors and content creators on a Mac who run several audio apps at once. The core scene: editing in DaVinci Resolve with headphones on, while a browser, music player or call plays on the laptop speakers (or the other way round). The primary user is the author (EAZYIT). The app is also published for other creators.
+Video editors and content creators on a Mac who run several audio apps at once. The core scene: editing in DaVinci Resolve with headphones on, while a browser, music player or call plays on the laptop speakers (or the other way round). The primary user is the author (EasyInfoTech). The app is also published for other creators.
 
 ## Product Purpose
 
@@ -37,7 +37,7 @@ Uses Apple's native Core Audio process taps (macOS 14.2+). There is nothing to i
 
 ## Brand Commitments
 
-- Name: AudioDiverger, by EAZYIT.
+- Name: AudioDiverger, by EasyInfoTech.
 - Icon motif: a branching arrow (`arrow.triangle.branch`) on a violet-to-cyan gradient (Resources/AppIcon.icns).
 
 ## Evidence on Hand

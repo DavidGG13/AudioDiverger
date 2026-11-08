@@ -109,6 +109,6 @@ Issues and pull requests are welcome. If something doesn't route the way you exp
 
 <div align="center">
 
-MIT © <a href="https://github.com/DavidGG13">EAZYIT</a>
+MIT © <a href="https://github.com/DavidGG13">EasyInfoTech</a>
 
 </div>

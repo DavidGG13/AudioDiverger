@@ -45,6 +45,7 @@ final class AudioModel: ObservableObject {
     }
 
     private init() {
+        Self.migrateLegacyDefaults(defaults)
         if let stored = defaults.dictionary(forKey: Keys.assignments) as? [String: [String]] {
             assignments = stored
         } else {
@@ -213,6 +214,18 @@ final class AudioModel: ObservableObject {
     var isMetering: Bool { visibleSurfaces > 0 }
 
     // MARK: - Persistence
+
+    /// Versions ≤ 1.2.0 used the bundle id "com.eazyit.AudioDiverger".
+    /// Copy those settings over once so nobody loses their routes or scenes.
+    private static func migrateLegacyDefaults(_ defaults: UserDefaults) {
+        let flag = "migratedLegacyDomain"
+        guard !defaults.bool(forKey: flag) else { return }
+        defaults.set(true, forKey: flag)
+        guard let legacy = defaults.persistentDomain(forName: "com.eazyit.AudioDiverger") else { return }
+        for (key, value) in legacy where defaults.object(forKey: key) == nil {
+            defaults.set(value, forKey: key)
+        }
+    }
 
     private func persist() {
         defaults.set(assignments, forKey: Keys.assignments)

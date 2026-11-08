@@ -3,7 +3,7 @@ import CoreAudio
 import Foundation
 import os
 
-private let log = Logger(subsystem: "com.eazyit.AudioDiverger", category: "route")
+private let log = Logger(subsystem: "com.easyinfotech.AudioDiverger", category: "route")
 
 /// Plain values shared with the real-time IO thread. Aligned 32-bit
 /// loads/stores are atomic on Apple silicon and Intel, which is all we need
@@ -25,7 +25,7 @@ final class AppRoute {
         case meter(String)       // clock device UID (system default)
     }
 
-    static let aggregatePrefix = "com.eazyit.AudioDiverger.aggregate."
+    static let aggregatePrefix = "com.easyinfotech.AudioDiverger.aggregate."
 
     let appID: String
     let processObjects: [AudioObjectID]
