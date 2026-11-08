@@ -65,6 +65,7 @@ enum ProcessCatalog {
             let bundleID = CA.string(object, kAudioProcessPropertyBundleID) ?? ""
             guard let app = owningApp(pid: pid, bundleID: bundleID, running: running),
                   app.processIdentifier != me,
+                  app.bundleIdentifier != Bundle.main.bundleIdentifier,
                   let key = app.bundleIdentifier else { continue }
 
             let playing = (CA.scalar(object, kAudioProcessPropertyIsRunningOutput, initial: UInt32(0)) ?? 0) != 0

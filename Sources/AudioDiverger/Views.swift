@@ -208,10 +208,9 @@ struct TrackRow: View {
 
             Spacer(minLength: 6)
 
-            MuteButton(isMuted: muted) { model.toggleMute(app.id) }
-
             DestinationButton(app: app)
-                .frame(width: 196, alignment: .trailing)
+
+            MuteButton(isMuted: muted) { model.toggleMute(app.id) }
         }
         .padding(.leading, 10)
         .padding(.trailing, 8)
@@ -354,7 +353,7 @@ private struct DeviceChip: View {
                 .font(.caption.weight(.medium))
                 .lineLimit(1)
                 .truncationMode(.tail)
-                .frame(maxWidth: 150, alignment: .leading)
+                .frame(maxWidth: 140, alignment: .leading)
                 .fixedSize(horizontal: true, vertical: false)
         }
         .padding(.leading, 7)

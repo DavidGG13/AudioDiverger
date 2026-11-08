@@ -1,102 +1,128 @@
+<div align="center">
+
+<img src="docs/icon.png" width="112" alt="AudioDiverger icon">
+
 # AudioDiverger
 
-Trimite audio-ul fiecărei aplicații pe alt dispozitiv de ieșire, pe macOS.
-De exemplu: **DaVinci Resolve în căști** și **browser-ul pe difuzoarele laptopului**, în același timp.
+**Fiecare aplicație, pe difuzorul ei.**
+DaVinci în căști, browserul pe difuzoarele laptopului, totul în același timp.
 
-*Per-app audio output routing for macOS: send each app's sound to a different output device. No virtual drivers required.*
+[![Download](https://img.shields.io/github/v/release/DavidGG13/AudioDiverger?label=Descarc%C4%83&color=7c5cfa)](https://github.com/DavidGG13/AudioDiverger/releases/latest)
+![macOS 14.2+](https://img.shields.io/badge/macOS-14.2%2B-1ab8f2)
+![Swift](https://img.shields.io/badge/Swift-SwiftUI-orange)
+[![License: MIT](https://img.shields.io/badge/licen%C8%9B%C4%83-MIT-lightgrey)](LICENSE)
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/screenshot-dark.png">
+  <img src="docs/screenshot-light.png" width="400" alt="AudioDiverger: fiecare aplicație e un track, cu destinația ei, buton de mute și meter live">
+</picture>
+
+</div>
 
 ---
 
-## Cum funcționează
+macOS trimite tot sunetul pe o singură ieșire. Când editezi în DaVinci Resolve cu căștile pe urechi și vrei ca un tutorial, muzica sau un call să se audă pe difuzoarele laptopului (sau invers), nu ai de ales.
 
-AudioDiverger folosește **Core Audio Process Taps**, API-ul nativ Apple din macOS 14.2. Nu instalează niciun driver virtual (BlackHole, Loopback etc.).
+**AudioDiverger** îți lasă să alegi, pentru fiecare aplicație, unde se aude. Stă discret în bara de meniu și nu instalează niciun driver.
 
-Pentru fiecare aplicație căreia îi alegi un dispozitiv:
+## Ce face
 
-1. se creează un **process tap** care preia sunetul aplicației și îl oprește pe ieșirea ei inițială;
-2. se creează un **aggregate device** privat format din tap și dispozitivul ales;
-3. un IOProc real-time copiază sunetul din tap pe dispozitivul ales (sau pe mai multe deodată), cu volum separat pentru fiecare aplicație.
-
-Mute-ul fără rutare folosește doar un tap „muted”, fără niciun IO.
-
-Aplicațiile fără setare redau în continuare pe ieșirea implicită a sistemului.
-
-## Funcții
-
-- **Destinație per aplicație.** Fiecare aplicație apare ca un „track”, ca în timeline-ul DaVinci. Alegi unde se aude.
-- **Mai multe dispozitive simultan.** Bifezi, de exemplu, căștile *și* difuzoarele.
-- **Mute (M) și volum** separat pentru fiecare aplicație.
-- **Meter live** pe fiecare track, în culoarea dispozitivului. Rulează doar cât meniul e deschis.
-- **Scene (preseturi).** Salvezi toate rutele, de exemplu „Editare” sau „Call”, și le schimbi dintr-un click sau cu **⌃⌥⌘1 … ⌃⌥⌘9**, de oriunde.
-- **Rulează în background.** Stă doar în bara de meniu, fără iconiță în Dock. E bazată complet pe evenimente, fără polling, deci ~0% CPU când nu rutează nimic.
-- Alegerile se țin minte per aplicație și se reaplică automat, inclusiv când reconectezi căștile.
-
-## Cerințe
-
-- macOS **14.2** sau mai nou
+- 🎧 **Destinație per aplicație.** Fiecare aplicație e un *track*, ca în timeline-ul DaVinci. Alegi căștile, difuzoarele, placa de sunet sau orice alt dispozitiv.
+- 🔀 **Mai multe ieșiri deodată.** Aceeași aplicație poate suna simultan în căști *și* pe difuzoare.
+- 🔇 **Mute și volum** separat pentru fiecare aplicație.
+- 📈 **Meter live** pe fiecare track, în culoarea dispozitivului pe care sună.
+- 🎬 **Scene.** Salvezi setup-uri precum „Editare” sau „Call” și le schimbi dintr-un click sau cu **⌃⌥⌘1 … ⌃⌥⌘9**, din orice aplicație.
+- 🪶 **Aproape zero resurse.** Rulează doar în bara de meniu, fără Dock și fără polling. Când nu rutează nimic, consumul de CPU e ~0%.
+- 🔌 **Își amintește tot.** Setările se reaplică automat când deschizi aplicația sau reconectezi căștile. Dacă un dispozitiv dispare, sunetul revine pe ieșirea implicită și nu se pierde.
 
 ## Instalare
 
-### Descarcă
+1. Descarcă **`AudioDiverger-x.y.z.dmg`** din [Releases](https://github.com/DavidGG13/AudioDiverger/releases/latest).
+2. Trage **AudioDiverger** în **Applications**.
+3. La prima deschidere: **click dreapta → Open → Open**. Aplicația e gratuită și nu e notarizată de Apple.
+4. La prima rutare, macOS îți cere permisiunea de **înregistrare audio a sistemului**. Acceptă: așa poate AudioDiverger să preia sunetul unei aplicații.
 
-Ia `.dmg`-ul din [Releases](https://github.com/DavidGG13/AudioDiverger/releases/latest) și trage AudioDiverger în Applications.
-Aplicația nu e notarizată de Apple, deci la prima deschidere: **click dreapta → Open → Open**.
+> Merge pe macOS **14.2 sau mai nou**, pe Apple silicon și Intel.
 
-### Din sursă (Xcode sau Command Line Tools)
+## Cum se folosește
+
+1. Apasă pe iconița din bara de meniu.
+2. Pornește redarea într-o aplicație. Apare ca track, iar aplicațiile care nu sună stau la „Inactive”.
+3. Apasă pe destinația track-ului și bifează unul sau mai multe dispozitive. Tot acolo e și volumul.
+4. **M** oprește sunetul aplicației.
+5. **+** salvează rutele curente ca scenă. Click dreapta pe o scenă ca să o actualizezi sau să o ștergi.
+
+**Exemplu:** ieșirea sistemului rămâne pe *MacBook Speakers*, DaVinci Resolve merge pe *căști*, iar browserul rămâne pe *Implicit*.
+
+## Cum funcționează
+
+AudioDiverger folosește **Core Audio Process Taps**, API-ul nativ Apple din macOS 14.2. Nu folosește kernel extensions sau drivere virtuale (de tip BlackHole sau Loopback).
+
+Pentru fiecare aplicație rutată:
+
+1. un **process tap** preia sunetul aplicației și îl oprește pe ieșirea ei inițială;
+2. un **aggregate device** privat unește tap-ul cu dispozitivul sau dispozitivele alese;
+3. un IOProc real-time copiază sunetul acolo, aplicând volumul și calculând nivelul pentru meter.
+
+Mute-ul fără rutare e doar un tap „muted”, fără niciun IO. Meterele rulează doar cât e deschis meniul.
+
+## Limitări cunoscute
+
+- **Căști Bluetooth cu microfon (AirPods etc.).** AudioDiverger oprește stream-ul de microfon ca să păstreze calitatea înaltă. Unele modele pot trece totuși în modul „headset”.
+- Rutarea adaugă o latență mică (câteva milisecunde).
+- Sunetul merge stereo pe primele două canale ale fiecărui dispozitiv.
+- Interfața e în limba română.
+
+## Compilare din sursă
+
+Ai nevoie de Xcode sau de Command Line Tools (Swift 6).
 
 ```bash
 git clone https://github.com/DavidGG13/AudioDiverger.git
 cd AudioDiverger
-./scripts/build_app.sh --install     # compilează și copiază în /Applications
+./scripts/build_app.sh --install      # --universal pentru Apple silicon + Intel
+./scripts/make_dmg.sh                 # opțional: build/AudioDiverger-<versiune>.dmg
 ```
 
-Ai și `--universal` pentru Apple silicon + Intel. `./scripts/make_dmg.sh` face `.dmg`-ul.
-Un tag `v*` urcat pe GitHub pornește automat build-ul și publică release-ul (`.github/workflows/release.yml`).
+Un tag `v*` urcat pe GitHub construiește și publică automat un release ([`.github/workflows/release.yml`](.github/workflows/release.yml)).
 
-## Utilizare
-
-1. Deschide **AudioDiverger**. Apare iconița în bara de meniu.
-2. Pornește redarea în aplicațiile dorite. Apar ca track-uri, iar cele care nu redau stau la „Inactive”.
-3. Apasă pe destinația unui track și bifează unul sau mai multe dispozitive. Tot de acolo setezi volumul.
-4. La prima rutare, macOS cere permisiunea de **înregistrare audio a sistemului**. Acceptă.
-5. Apasă **+** sus ca să salvezi rutele ca scenă. Click dreapta pe o scenă ca să o actualizezi sau ștergi.
-
-### Exemplu: DaVinci în căști, browserul pe difuzoare
-
-- Ieșirea implicită a sistemului: **MacBook Speakers**
-- DaVinci Resolve → **căștile tale**
-- Browserul rămâne pe **Implicit**
-
-## Permisiuni
-
-Dacă nu se aude nimic după rutare, verifică **System Settings → Privacy & Security → Screen & System Audio Recording → System Audio Recording Only** și activează AudioDiverger.
-
-> Aplicația e semnată ad-hoc. După o recompilare, macOS poate cere din nou permisiunea.
-
-## Limitări cunoscute
-
-- **Căști Bluetooth cu microfon (AirPods etc.):** aplicația dezactivează stream-urile de microfon ale dispozitivului ca să rămână în modul de calitate înaltă (A2DP), dar unele modele pot trece totuși în modul „headset”.
-- **Latență:** rutarea adaugă o latență mică (câteva ms) față de redarea directă.
-- **Canale:** sunetul se trimite stereo pe primele două canale ale dispozitivului.
-- Dacă dispozitivul ales se deconectează, aplicația revine automat pe ieșirea implicită. Ruta se reface când dispozitivul revine.
-
-## Structură
+<details>
+<summary>Structura proiectului</summary>
 
 ```
 Sources/AudioDiverger/
-  AudioDivergerApp.swift   # app entry: meniu în bara de sus + fereastră opțională
-  Views.swift              # UI SwiftUI
-  AudioModel.swift         # stare, persistență, sincronizare rute
-  AppRoute.swift           # tap + aggregate device + IOProc (motorul audio, meter)
+  AudioDivergerApp.swift   # meniu în bara de sus + fereastră opțională
+  Views.swift              # UI SwiftUI (track-uri, scene, meter)
+  AudioModel.swift         # stare, persistență, scene, sincronizarea rutelor
+  AppRoute.swift           # tap + aggregate device + IOProc (motorul audio)
+  AudioApp.swift           # procese audio grupate pe aplicații
+  OutputDevice.swift       # dispozitive de ieșire
   HotKeys.swift            # scurtături globale pentru scene
-  Snapshot.swift           # randare offscreen a UI-ului (dezvoltare)
-  AudioApp.swift           # enumerare procese audio, grupare pe aplicații
-  OutputDevice.swift       # enumerare dispozitive de ieșire
   CoreAudioHelpers.swift   # wrappers Core Audio
-Resources/                 # Info.plist, AppIcon.icns
-scripts/                   # build_app.sh, make_icon.swift
+  Snapshot.swift           # randare offscreen a UI-ului (dezvoltare)
 ```
 
-## Licență
+</details>
 
-MIT © EAZYIT
+---
+
+<details>
+<summary>🇬🇧 English</summary>
+
+**AudioDiverger** is a tiny macOS menu bar app for **per-app audio output routing**. For example, you can hear DaVinci Resolve in your headphones while the browser plays on the laptop speakers.
+
+- Pick an output device per app, or several at once.
+- Per-app mute, volume and live level meters.
+- Scenes with global hotkeys (⌃⌥⌘1…9).
+- Event-driven, so it sits at ~0% CPU when idle.
+- Built on Apple's **Core Audio process taps** (macOS 14.2+), with no virtual audio drivers.
+
+Download the `.dmg` from [Releases](https://github.com/DavidGG13/AudioDiverger/releases/latest), drag it to Applications, right-click → Open on first launch, and allow *System Audio Recording* when asked. The UI is in Romanian.
+
+</details>
+
+<div align="center">
+
+MIT © <a href="https://github.com/DavidGG13">EAZYIT</a>
+
+</div>
