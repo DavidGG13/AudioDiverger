@@ -102,13 +102,13 @@ final class AppRoute {
         case .meter: description.muteBehavior = .unmuted
         }
         var tap = AudioObjectID.unknown
-        try caCheck(AudioHardwareCreateProcessTap(description, &tap), "Crearea tap-ului audio")
+        try caCheck(AudioHardwareCreateProcessTap(description, &tap), "Creating the audio tap")
         tapID = tap
     }
 
     private func createAggregate() throws {
         guard let main = devices.first else {
-            throw CoreAudioError(status: -1, operation: "Alegerea dispozitivului")
+            throw CoreAudioError(status: -1, operation: "Choosing the output device")
         }
         let subDevices: [[String: Any]] = devices.enumerated().map { index, device in
             [kAudioSubDeviceUIDKey: device.uid,
@@ -129,7 +129,7 @@ final class AppRoute {
         ]
         var aggregate = AudioObjectID.unknown
         try caCheck(AudioHardwareCreateAggregateDevice(description as CFDictionary, &aggregate),
-                    "Crearea dispozitivului agregat")
+                    "Creating the aggregate device")
         aggregateID = aggregate
     }
 
@@ -161,8 +161,8 @@ final class AppRoute {
         var procID: AudioDeviceIOProcID?
         try caCheck(AudioDeviceCreateIOProcIDWithBlock(&procID, aggregateID, nil) { _, input, _, output, _ in
             Renderer.render(input: input, output: output, plan: plan, gain: gain.value, level: level)
-        }, "Crearea IOProc")
-        guard let procID else { throw CoreAudioError(status: -1, operation: "Crearea IOProc") }
+        }, "Creating the IOProc")
+        guard let procID else { throw CoreAudioError(status: -1, operation: "Creating the IOProc") }
         ioProcID = procID
 
         if skip > 0 {
@@ -171,7 +171,7 @@ final class AppRoute {
             setInputStreamUsage(procID: procID, total: aggregateInputs, disabledPrefix: skip)
         }
 
-        try caCheck(AudioDeviceStart(aggregateID, procID), "Pornirea redării")
+        try caCheck(AudioDeviceStart(aggregateID, procID), "Starting playback")
     }
 
     private func setInputStreamUsage(procID: AudioDeviceIOProcID, total: Int, disabledPrefix: Int) {

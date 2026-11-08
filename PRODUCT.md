@@ -33,7 +33,7 @@ Uses Apple's native Core Audio process taps (macOS 14.2+). There is nothing to i
 - Remembers assignments by bundle ID and re-applies them automatically when an app starts or a device reconnects.
 - Requires the System Audio Recording permission.
 - Signed ad-hoc only. Releases ship as an unsigned .dmg built by GitHub Actions, with no Apple Developer account.
-- UI language: Romanian.
+- UI language: English (for a worldwide audience).
 
 ## Brand Commitments
 

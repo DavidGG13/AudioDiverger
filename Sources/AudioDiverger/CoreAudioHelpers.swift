@@ -7,7 +7,7 @@ struct CoreAudioError: LocalizedError {
     let operation: String
 
     var errorDescription: String? {
-        "\(operation) a eșuat (cod \(status)\(fourCC))"
+        "\(operation) failed (code \(status)\(fourCC))"
     }
 
     private var fourCC: String {

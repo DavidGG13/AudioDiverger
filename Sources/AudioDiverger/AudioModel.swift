@@ -4,7 +4,7 @@ import CoreAudio
 import ServiceManagement
 import SwiftUI
 
-/// A saved snapshot of every route ("scene"), e.g. "Editare" or "Call".
+/// A saved snapshot of every route ("scene"), e.g. "Editing" or "Call".
 struct Preset: Codable, Identifiable, Equatable {
     var id = UUID()
     var name: String
@@ -92,7 +92,7 @@ final class AudioModel: ObservableObject {
     func level(for appID: String) -> Float { routes[appID]?.level.value ?? 0 }
 
     func deviceName(forUID uid: String) -> String {
-        devices.first { $0.uid == uid }?.name ?? deviceNames[uid] ?? "Dispozitiv necunoscut"
+        devices.first { $0.uid == uid }?.name ?? deviceNames[uid] ?? "Unknown device"
     }
 
     func isConnected(uid: String) -> Bool { devices.contains { $0.uid == uid } }

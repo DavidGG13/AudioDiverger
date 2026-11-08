@@ -36,4 +36,4 @@ jobs:
         run: |
           gh release create "$GITHUB_REF_NAME" build/*.dmg \
             --title "AudioDiverger $GITHUB_REF_NAME" \
-            --notes "Descarcă .dmg-ul, trage AudioDiverger în Applications. La prima deschidere: click dreapta → Open (aplicația nu e notarizată de Apple)."
+            --notes "Download the .dmg and drag AudioDiverger to Applications. On first launch: right-click → Open (the app is not notarized by Apple)."

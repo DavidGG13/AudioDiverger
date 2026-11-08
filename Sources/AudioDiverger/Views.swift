@@ -28,7 +28,7 @@ struct RoutingView: View {
                             TrackRow(app: app)
                         }
                         if model.activeApps.isEmpty {
-                            Text("Nimic nu redă acum.")
+                            Text("Nothing is playing right now.")
                                 .font(.callout)
                                 .foregroundStyle(.secondary)
                                 .frame(maxWidth: .infinity)
@@ -74,9 +74,9 @@ private struct PresetBar: View {
     var body: some View {
         HStack(spacing: 6) {
             if model.presets.isEmpty {
-                Text("Scene")
+                Text("Scenes")
                     .font(.subheadline.weight(.semibold))
-                Text("salvează rutele curente ca să le schimbi dintr-un click")
+                Text("save your routes and switch them in one click")
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .lineLimit(1)
@@ -103,24 +103,24 @@ private struct PresetBar: View {
                     .contentShape(Rectangle())
             }
             .buttonStyle(.borderless)
-            .help("Salvează rutele curente ca scenă nouă")
-            .accessibilityLabel("Scenă nouă")
+            .help("Save the current routes as a new scene")
+            .accessibilityLabel("New scene")
             .popover(isPresented: $naming, arrowEdge: .bottom) {
                 VStack(alignment: .leading, spacing: 10) {
-                    Text("Scenă nouă").font(.headline)
-                    TextField("ex. Editare", text: $newName)
+                    Text("New scene").font(.headline)
+                    TextField("e.g. Editing", text: $newName)
                         .textFieldStyle(.roundedBorder)
                         .frame(width: 200)
                         .onSubmit(save)
-                    Text("Salvează destinațiile și mute-urile tuturor aplicațiilor.")
+                    Text("Saves the outputs and mutes of every app.")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                         .frame(width: 200, alignment: .leading)
                         .fixedSize(horizontal: false, vertical: true)
                     HStack {
                         Spacer()
-                        Button("Anulează") { naming = false }
-                        Button("Salvează", action: save)
+                        Button("Cancel") { naming = false }
+                        Button("Save", action: save)
                             .keyboardShortcut(.defaultAction)
                             .disabled(newName.trimmingCharacters(in: .whitespaces).isEmpty)
                     }
@@ -170,12 +170,12 @@ private struct PresetChip: View {
             .contentShape(Capsule())
         }
         .buttonStyle(.plain)
-        .help(index < 9 ? "Aplică scena (\(HotKeyCenter.modifierSymbols)\(index + 1))" : "Aplică scena")
-        .accessibilityLabel("Scena \(preset.name)\(isActive ? ", activă" : "")")
+        .help(index < 9 ? "Apply scene (\(HotKeyCenter.modifierSymbols)\(index + 1))" : "Apply scene")
+        .accessibilityLabel("Scene \(preset.name)\(isActive ? ", active" : "")")
         .contextMenu {
-            Button("Actualizează cu rutele curente") { model.updatePreset(preset.id) }
+            Button("Update with current routes") { model.updatePreset(preset.id) }
             Divider()
-            Button("Șterge scena", role: .destructive) { model.deletePreset(preset.id) }
+            Button("Delete scene", role: .destructive) { model.deletePreset(preset.id) }
         }
     }
 }
@@ -248,14 +248,14 @@ private struct StatusLine: View {
                     .foregroundStyle(Color(nsColor: .systemRed))
                     .help(error)
             } else if let missing = model.assignedUIDs(for: app.id).first(where: { !model.isConnected(uid: $0) }) {
-                Label("\(model.deviceName(forUID: missing)) deconectat", systemImage: "bolt.horizontal.circle")
+                Label("\(model.deviceName(forUID: missing)) disconnected", systemImage: "bolt.horizontal.circle")
                     .foregroundStyle(Color(nsColor: .systemOrange))
             } else if model.isMuted(app.id) {
-                Text("Fără sunet").foregroundStyle(.secondary)
+                Text("Muted").foregroundStyle(.secondary)
             } else if app.isPlaying {
-                Text("Redă acum").foregroundStyle(.secondary)
+                Text("Playing").foregroundStyle(.secondary)
             } else {
-                Text("Inactivă").foregroundStyle(.tertiary)
+                Text("Idle").foregroundStyle(.tertiary)
             }
         }
         .font(.caption)
@@ -290,8 +290,8 @@ private struct MuteButton: View {
                 .contentShape(RoundedRectangle(cornerRadius: 5))
         }
         .buttonStyle(.plain)
-        .help(isMuted ? "Pornește sunetul" : "Oprește sunetul (mute)")
-        .accessibilityLabel(isMuted ? "Pornește sunetul" : "Mute")
+        .help(isMuted ? "Unmute" : "Mute")
+        .accessibilityLabel(isMuted ? "Unmute" : "Mute")
         .accessibilityAddTraits(isMuted ? .isSelected : [])
     }
 }
@@ -320,7 +320,7 @@ private struct DestinationButton: View {
                             .background(Capsule().fill(Color.primary.opacity(0.07)))
                     }
                 } else {
-                    DeviceChip(name: "Implicit", color: nil, dimmed: false)
+                    DeviceChip(name: "Default", color: nil, dimmed: false)
                 }
                 Image(systemName: "chevron.up.chevron.down")
                     .font(.system(size: 8, weight: .semibold))
@@ -329,8 +329,8 @@ private struct DestinationButton: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .accessibilityLabel("Destinație: \(uids.isEmpty ? "implicit" : uids.map(model.deviceName(forUID:)).joined(separator: ", "))")
-        .help("Alege unde se aude \(app.name)")
+        .accessibilityLabel("Output: \(uids.isEmpty ? "system default" : uids.map(model.deviceName(forUID:)).joined(separator: ", "))")
+        .help("Choose where \(app.name) plays")
         .popover(isPresented: $open, arrowEdge: .trailing) {
             DestinationPanel(app: app)
                 .environmentObject(model)
@@ -380,8 +380,8 @@ private struct DestinationPanel: View {
             .padding(.top, 12)
             .padding(.bottom, 8)
 
-            PanelRow(title: "Implicit",
-                     subtitle: model.defaultDevice.map { "urmează sistemul · \($0.name)" } ?? "urmează sistemul",
+            PanelRow(title: "Default",
+                     subtitle: model.defaultDevice.map { "follows the system · \($0.name)" } ?? "follows the system",
                      color: nil, symbol: "arrow.uturn.backward",
                      checked: uids.isEmpty) {
                 model.setDevices([], for: app.id)
@@ -397,14 +397,14 @@ private struct DestinationPanel: View {
                 }
             }
             ForEach(uids.filter { !model.isConnected(uid: $0) }, id: \.self) { uid in
-                PanelRow(title: model.deviceName(forUID: uid), subtitle: "deconectat",
+                PanelRow(title: model.deviceName(forUID: uid), subtitle: "disconnected",
                          color: model.color(forUID: uid), symbol: "bolt.horizontal.circle",
                          checked: true) {
                     model.toggleDevice(uid, for: app.id)
                 }
             }
 
-            Text("Bifează mai multe dispozitive ca să se audă simultan.")
+            Text("Tick several devices to play on all of them at once.")
                 .font(.caption)
                 .foregroundStyle(.secondary)
                 .padding(.horizontal, 14)
@@ -426,9 +426,9 @@ private struct DestinationPanel: View {
                     .frame(width: 34, alignment: .trailing)
             }
             .padding(.horizontal, 14)
-            .accessibilityLabel("Volum \(app.name)")
+            .accessibilityLabel("\(app.name) volume")
             if uids.isEmpty {
-                Text("Volumul se aplică după ce alegi un dispozitiv.")
+                Text("Volume applies once you pick a device.")
                     .font(.caption)
                     .foregroundStyle(.tertiary)
                     .padding(.horizontal, 14)
@@ -535,7 +535,7 @@ private struct InactiveSection: View {
                     Image(systemName: "chevron.right")
                         .font(.system(size: 9, weight: .bold))
                         .rotationEffect(.degrees(expanded ? 90 : 0))
-                    Text("Inactive")
+                    Text("Idle")
                         .font(.caption.weight(.semibold))
                     Text("\(apps.count)")
                         .font(.caption.monospacedDigit())
@@ -548,8 +548,8 @@ private struct InactiveSection: View {
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
-            .accessibilityLabel("Aplicații inactive, \(apps.count)")
-            .accessibilityValue(expanded ? "deschis" : "închis")
+            .accessibilityLabel("Idle apps, \(apps.count)")
+            .accessibilityValue(expanded ? "expanded" : "collapsed")
 
             if expanded {
                 ForEach(apps) { TrackRow(app: $0) }
@@ -565,9 +565,9 @@ private struct EmptyState: View {
             Image(systemName: "waveform.slash")
                 .font(.system(size: 28, weight: .light))
                 .foregroundStyle(.tertiary)
-            Text("Nicio aplicație audio")
+            Text("No audio apps yet")
                 .font(.headline)
-            Text("Pornește redarea într-o aplicație (DaVinci, browser, Spotify) și apare aici ca track.")
+            Text("Play something in any app (DaVinci, a browser, Spotify) and it shows up here as a track.")
                 .font(.callout)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
@@ -588,7 +588,7 @@ private struct Footer: View {
             Image(systemName: model.defaultDevice?.symbol ?? "speaker.wave.2")
                 .font(.caption)
                 .foregroundStyle(.secondary)
-            Text("Implicit: \(model.defaultDevice?.name ?? "—")")
+            Text("Default: \(model.defaultDevice?.name ?? "—")")
                 .font(.caption)
                 .foregroundStyle(.secondary)
                 .lineLimit(1)
@@ -602,18 +602,18 @@ private struct Footer: View {
                     Image(systemName: "macwindow").frame(width: 24, height: 22)
                 }
                 .buttonStyle(.borderless)
-                .help("Deschide fereastra")
-                .accessibilityLabel("Deschide fereastra")
+                .help("Open window")
+                .accessibilityLabel("Open window")
             }
 
             Menu {
-                Toggle("Pornește la login", isOn: Binding(
+                Toggle("Launch at login", isOn: Binding(
                     get: { model.launchAtLogin },
                     set: { model.launchAtLogin = $0 }))
-                Button("Resetează toate rutele") { model.resetRoutes() }
+                Button("Reset all routes") { model.resetRoutes() }
                     .disabled(model.assignments.isEmpty && model.muted.isEmpty)
                 Divider()
-                Button("Ieșire din AudioDiverger") { NSApp.terminate(nil) }
+                Button("Quit AudioDiverger") { NSApp.terminate(nil) }
                     .keyboardShortcut("q")
             } label: {
                 Image(systemName: "gearshape")
@@ -621,8 +621,8 @@ private struct Footer: View {
             .menuStyle(.borderlessButton)
             .menuIndicator(.hidden)
             .fixedSize()
-            .help("Setări")
-            .accessibilityLabel("Setări")
+            .help("Settings")
+            .accessibilityLabel("Settings")
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 7)
