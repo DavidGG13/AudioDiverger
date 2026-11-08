@@ -1,6 +1,10 @@
 import SwiftUI
 
 final class AppDelegate: NSObject, NSApplicationDelegate {
+    func applicationDidFinishLaunching(_ notification: Notification) {
+        MainActor.assumeIsolated { Snapshot.runIfRequested() }
+    }
+
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool { false }
 
     func applicationWillTerminate(_ notification: Notification) {
@@ -14,19 +18,24 @@ struct AudioDivergerApp: App {
     @ObservedObject private var model = AudioModel.shared
 
     var body: some Scene {
-        Window("AudioDiverger", id: "main") {
-            RoutingView()
-                .environmentObject(model)
-                .frame(minWidth: 560, idealWidth: 600, minHeight: 360, idealHeight: 460)
-        }
-        .defaultSize(width: 600, height: 460)
-
+        // Background utility: lives in the menu bar (LSUIElement, no Dock icon).
         MenuBarExtra {
-            MenuBarContent()
+            RoutingView(style: .popover)
                 .environmentObject(model)
+                .frame(width: 400)
         } label: {
-            Image(systemName: model.assignments.isEmpty ? "arrow.triangle.branch" : "headphones")
+            Image(systemName: model.assignments.isEmpty && model.muted.isEmpty
+                  ? "arrow.triangle.branch" : "headphones")
+                .accessibilityLabel("AudioDiverger")
         }
         .menuBarExtraStyle(.window)
+
+        // Optional larger window, opened from the popover.
+        Window("AudioDiverger", id: "main") {
+            RoutingView(style: .window)
+                .environmentObject(model)
+                .frame(minWidth: 440, idealWidth: 480, minHeight: 360, idealHeight: 540)
+        }
+        .defaultSize(width: 480, height: 540)
     }
 }
